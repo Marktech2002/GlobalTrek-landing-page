@@ -18,14 +18,10 @@ interface TestimonialsProps {
 export default function Testimonials({ testimonials }: TestimonialsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (sectionRef.current && isMounted) {
+    if (sectionRef.current && !hasAnimated) {
       const ctx = gsap.context(() => {
         gsap.from(".animate-scroll", {
           opacity: 0,
@@ -35,46 +31,47 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 80%",
-            once: true,
+            onEnter: () => setHasAnimated(true),
           },
         });
       }, sectionRef);
 
       return () => ctx.revert();
     }
-  }, [isMounted]);
+  }, [hasAnimated]);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? Math.max(0, testimonials.length - 3) : prev - 1));
+    setCurrentIndex((prev) => {
+      if (prev === 0) return Math.max(0, testimonials.length - 3);
+      return prev - 1;
+    });
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= testimonials.length - 3 ? 0 : prev + 1));
+    setCurrentIndex((prev) => {
+      if (prev >= testimonials.length - 3) return 0;
+      return prev + 1;
+    });
   };
 
   if (!testimonials || testimonials.length === 0) {
     return null;
   }
 
-  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + 3);
+  const getVisibleTestimonials = () => {
+    if (testimonials.length <= 3) {
+      return testimonials;
+    }
+    
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % testimonials.length;
+      visible.push(testimonials[index]);
+    }
+    return visible;
+  };
 
-  if (visibleTestimonials.length < 3 && testimonials.length >= 3) {
-    visibleTestimonials.push(...testimonials.slice(0, 3 - visibleTestimonials.length));
-  }
-
-  if (!isMounted) {
-    return (
-      <section className="container mx-auto px-4 lg:px-16 py-16">
-        <div className="text-center space-y-6 mb-12">
-          <h2 className="heading-section">What Our Travelers Say</h2>
-          <p className="body-large max-w-3xl mx-auto">
-            Real stories from real travelers. See why thousands of adventurers choose us to create their unforgettable journeys.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 min-h-[300px]" />
-      </section>
-    );
-  }
+  const visibleTestimonials = getVisibleTestimonials();
 
   return (
     <section ref={sectionRef} className="container mx-auto px-4 lg:px-16 py-16">
@@ -86,11 +83,11 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 min-h-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {visibleTestimonials.map((testimonial, index) => (
             <Card
-              key={`${testimonial.id}-${currentIndex}-${index}`}
-              className="p-6 space-y-6 border-[0.6px] border-primary/20 rounded-3xl animate-scroll transition-all duration-300"
+              key={`${testimonial.id}-${index}`}
+              className="p-6 space-y-6 border-[0.6px] border-primary/20 rounded-3xl transition-all duration-300 opacity-100"
             >
               <div className="flex items-center gap-4">
                 <Avatar className="w-14 h-14">
@@ -111,7 +108,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
           ))}
         </div>
 
-        <div className="flex justify-center gap-4 animate-scroll">
+        <div className="flex justify-center gap-4">
           <Button
             variant="outline"
             size="icon"

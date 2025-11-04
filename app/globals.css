@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@400;600;700&family=Outfit:wght@400&family=Inter:wght@500&family=Poppins:wght@400;500&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-glassmorphic-bg: var(--glassmorphic-bg);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+
+:root {
+  --radius: 32px;
+  --primary: #1c77c3;
+  --primary-foreground: #ffffff;
+  --secondary: #ff6f61;
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: rgba(0, 0, 0, 0.7);
+  --muted-foreground: rgba(0, 0, 0, 0.5);
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --border: rgba(0, 0, 0, 0.2);
+  --input: rgba(0, 0, 0, 0.2);
+  --ring: #1c77c3;
+  --glassmorphic-bg: rgba(235, 235, 235, 0.24);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+
+
+@utility heading-hero {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--foreground);
+  
+  @media (max-width: 768px) {
+    font-size: 48px;
+  }
+}
+
+@utility heading-section {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--foreground);
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+@utility shadow-box {
+ box-shadow: 0px 0px 8px 2px #0000001A;
+}
+
+@utility heading-card {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+@utility body-large {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+
+@utility body-regular {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+@utility body-small {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+@utility label-large {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+@utility label-regular {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+@utility statistic-large {
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+  color: #010101;
+  
+}
+
+@utility glassmorphic {
+  backdrop-filter: blur(4px);
+  background-color: var(--glassmorphic-bg);
+}

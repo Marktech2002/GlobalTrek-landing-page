@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -19,21 +18,31 @@ interface TestimonialsProps {
 export default function Testimonials({ testimonials }: TestimonialsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (sectionRef.current) {
-      gsap.from(sectionRef.current.querySelectorAll(".animate-scroll"), {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
-    }
+    setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (sectionRef.current && isMounted) {
+      const ctx = gsap.context(() => {
+        gsap.from(".animate-scroll", {
+          opacity: 0,
+          y: 50,
+          duration: 0.8,
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        });
+      }, sectionRef);
+
+      return () => ctx.revert();
+    }
+  }, [isMounted]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? Math.max(0, testimonials.length - 3) : prev - 1));
@@ -43,14 +52,28 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
     setCurrentIndex((prev) => (prev >= testimonials.length - 3 ? 0 : prev + 1));
   };
 
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
+
   const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + 3);
 
   if (visibleTestimonials.length < 3 && testimonials.length >= 3) {
     visibleTestimonials.push(...testimonials.slice(0, 3 - visibleTestimonials.length));
   }
 
-  if (!testimonials || testimonials.length === 0) {
-    return null;
+  if (!isMounted) {
+    return (
+      <section className="container mx-auto px-4 lg:px-16 py-16">
+        <div className="text-center space-y-6 mb-12">
+          <h2 className="heading-section">What Our Travelers Say</h2>
+          <p className="body-large max-w-3xl mx-auto">
+            Real stories from real travelers. See why thousands of adventurers choose us to create their unforgettable journeys.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 min-h-[300px]" />
+      </section>
+    );
   }
 
   return (
@@ -63,10 +86,10 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
       </div>
 
       <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 min-h-[300px]">
           {visibleTestimonials.map((testimonial, index) => (
             <Card
-              key={`${testimonial.id}-${index}`}
+              key={`${testimonial.id}-${currentIndex}-${index}`}
               className="p-6 space-y-6 border-[0.6px] border-primary/20 rounded-3xl animate-scroll transition-all duration-300"
             >
               <div className="flex items-center gap-4">
@@ -94,6 +117,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             size="icon"
             onClick={handlePrev}
             className="rounded-full border-primary text-primary hover:bg-primary/10"
+            aria-label="Previous testimonials"
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
@@ -102,6 +126,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             size="icon"
             onClick={handleNext}
             className="rounded-full border-primary text-primary hover:bg-primary/10"
+            aria-label="Next testimonials"
           >
             <ChevronRight className="w-5 h-5" />
           </Button>

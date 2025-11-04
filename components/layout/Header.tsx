@@ -32,7 +32,7 @@ export default function Header() {
       <div className="container mx-auto px-4 lg:px-16">
         <div className="flex h-16 md:h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <LogoIcon width={30} height={30} color="#1c77c3" className="transition-transform group-hover:scale-110" />
+            <LogoIcon width={30} height={30} />
             <span className="text-xl md:text-2xl font-bold text-primary">GlobTrek</span>
           </Link>
 
